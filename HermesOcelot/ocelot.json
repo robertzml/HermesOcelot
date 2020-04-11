@@ -3,18 +3,21 @@
     {
       "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "192.168.1.121",
-          "Port": 10011
-        }
-      ],
       "UpstreamPathTemplate": "/account-service/{everything}",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamHttpMethod": [ "Get" ],
+      "ServiceName": "hermes-account",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://192.168.1.121:5000"
+    "BaseUrl": "http://192.168.1.121:5000",
+    "ServiceDiscoveryProvider": {
+      "Host": "192.168.1.121",
+      "Port": 8500,
+      "Type": "Consul"
+    }
   }
 }
 

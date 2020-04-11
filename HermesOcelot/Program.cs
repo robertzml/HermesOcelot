@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
 using System.IO;
 
 namespace HermesOcelot
@@ -10,7 +11,7 @@ namespace HermesOcelot
     public class Program
     {
         public static void Main(string[] args)
-        {           
+        {
             new WebHostBuilder()
                .UseKestrel()
                .UseContentRoot(Directory.GetCurrentDirectory())
@@ -25,7 +26,7 @@ namespace HermesOcelot
                })
                .ConfigureServices(s =>
                {
-                   s.AddOcelot();
+                   s.AddOcelot().AddConsul();
                })
                .ConfigureLogging((hostingContext, logging) =>
                {
