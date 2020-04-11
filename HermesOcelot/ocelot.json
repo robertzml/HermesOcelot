@@ -1,7 +1,7 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/account/list",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,7 +9,7 @@
           "Port": 10011
         }
       ],
-      "UpstreamPathTemplate": "/account/list",
+      "UpstreamPathTemplate": "/account-service/{everything}",
       "UpstreamHttpMethod": [ "Get" ]
     }
   ],

@@ -1,0 +1,14 @@
+﻿version: "3.7"
+services:
+  hermes-ocelot:
+    build:
+      context: .
+    image: hermes-ocelot
+    container_name: hermes-ocelot-1
+    ports:
+      - "5000:5000"
+    networks:
+      hermes-net:
+networks:
+  hermes-net:
+    name: hermes-network

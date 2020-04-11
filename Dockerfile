@@ -8,9 +8,9 @@ EXPOSE 5000
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["HermesOcelot.csproj", "HermesOcelot/"]
+COPY ["HermesOcelot/HermesOcelot.csproj", "HermesOcelot/"]
 RUN dotnet restore "HermesOcelot/HermesOcelot.csproj"
-COPY . "HermesOcelot/"
+COPY . .
 WORKDIR "/src/HermesOcelot"
 RUN dotnet build "HermesOcelot.csproj" -c Release -o /app/build
 
