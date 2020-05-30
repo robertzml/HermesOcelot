@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Ocelot" Version="16.0.1" />
     <PackageReference Include="Ocelot.Provider.Consul" Version="16.0.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
   </ItemGroup>
 
   <ItemGroup>
