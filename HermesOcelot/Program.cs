@@ -40,7 +40,11 @@ namespace HermesOcelot
                .UseIISIntegration()
                .Configure(app =>
                {
-                   app.UseOcelot(config).Wait();
+                   app.UseOcelot(new OcelotPipelineConfiguration
+                   {
+                       PreAuthenticationMiddleware = IdentityAuth.AuthIdToken
+                   })
+                   .Wait();
                })
                .Build()
                .Run();
@@ -72,17 +76,17 @@ namespace HermesOcelot
             {
                 PreErrorResponderMiddleware = async (ctx, next) =>
                 {
-                    var req = ctx.HttpContext.Request;
+                    var req = ctx.Request;
 
                     if (req.Headers["Authorization"][0] == "1")
                     {
-                        var response = ctx.HttpContext.Response;
+                        var response = ctx.Response;
                         response.ContentType = "application/json";
                         response.StatusCode = 403;
                         response.Headers["Answer"] = "miss";
 
                         var strResult = "some miss";
-                        await ctx.HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(strResult));
+                        await ctx.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(strResult));
                         
                         //var error = new UnauthenticatedError("Request for authenticated route was unauthenticated");
                         //ctx.Errors.Add(error);
