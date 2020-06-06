@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace HermesOcelot
 {
     public class JwtHelper
     {
+        /// <summary>
+        /// 生成id token
+        /// </summary>
+        /// <param name="uid">用户ID</param>
+        /// <returns>id token</returns>
         public string CreateIdToken(string uid)
         {
             try
@@ -38,5 +40,23 @@ namespace HermesOcelot
                 return e.Message;
             }
         }
+
+        //public bool ValidateIdToken(string token)
+        //{
+        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("the shengdangjia hermes project"));
+        //    var sign = new SigningCredentials(key, SecurityAlgorithms.HmacSha384);
+
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var validationParameters = new TokenValidationParameters()
+        //    {
+        //        ValidateIssuerSigningKey = true,
+        //        IssuerSigningKey = sign.Key,
+
+        //        ValidateIssuer = true,
+        //        ValidIssuer = "auth"
+        //    };
+
+        //    handler.ValidateToken(token, validationParameters)
+        //}
     }
 }
