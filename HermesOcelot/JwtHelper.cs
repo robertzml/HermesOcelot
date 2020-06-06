@@ -1,7 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
+using JWT.Exceptions;
+using JWT.Serializers;
 
 namespace HermesOcelot
 {
@@ -16,24 +19,18 @@ namespace HermesOcelot
         {
             try
             {
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("the shengdangjia hermes project"));
-                var sign = new SigningCredentials(key, SecurityAlgorithms.HmacSha384);
+                const string key = "the shengdangjia hermes project";
+               
+                var token = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA384Algorithm())
+                    .WithSecret(key)
+                    .Subject("id token")
+                    .Issuer("auth")
+                    .ExpirationTime(DateTime.Now.AddHours(1))
+                    .AddClaim("uid", uid)
+                    .Encode();
 
-                var claims = new Claim[]
-                {
-                new Claim(JwtRegisteredClaimNames.Sub, "id token"),
-                new Claim("uid", uid)
-                };
-
-                var token = new JwtSecurityToken(
-                    issuer: "auth",
-                    expires: DateTime.Now.AddHours(1),
-                    claims: claims,
-                    signingCredentials: sign
-                    );
-
-                var result = new JwtSecurityTokenHandler().WriteToken(token);
-                return result;
+                return token;
             }
             catch(Exception e)
             {
@@ -41,22 +38,36 @@ namespace HermesOcelot
             }
         }
 
-        //public bool ValidateIdToken(string token)
-        //{
-        //    var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("the shengdangjia hermes project"));
-        //    var sign = new SigningCredentials(key, SecurityAlgorithms.HmacSha384);
 
-        //    var handler = new JwtSecurityTokenHandler();
-        //    var validationParameters = new TokenValidationParameters()
-        //    {
-        //        ValidateIssuerSigningKey = true,
-        //        IssuerSigningKey = sign.Key,
 
-        //        ValidateIssuer = true,
-        //        ValidIssuer = "auth"
-        //    };
+        public bool ValidateIdToken(string token)
+        {
+            try
+            {
+                const string key = "the shengdangjia hermes project";
 
-        //    handler.ValidateToken(token, validationParameters)
-        //}
+                var json = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA384Algorithm()) // symmetric
+                    .WithSecret(key)
+                    .MustVerifySignature()
+                    .Decode<IDictionary<string, object>>(token);
+
+                Console.WriteLine(json);
+
+                return true;
+            }
+            catch (TokenExpiredException)
+            {
+                Console.WriteLine("Token has expired");
+
+                return false;
+            }
+            catch (SignatureVerificationException)
+            {
+                Console.WriteLine("Token has invalid signature");
+
+                return false;
+            }
+        }
     }
 }

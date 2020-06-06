@@ -33,19 +33,25 @@ namespace HermesOcelot
                 return;
             }
 
-            if (req.Headers["Authorization"][0] == "1")
+            var token = req.Headers["Authorization"][0];
+
+            JwtHelper jwtHelper = new JwtHelper();
+            var valid = jwtHelper.ValidateIdToken(token);
+            if (valid)
+            {
+                await next.Invoke();
+            }
+            else
             {
                 var response = ctx.Response;
                 response.ContentType = "application/json";
                 response.StatusCode = 401;
-                response.Headers["Answer"] = "miss";
+                response.Headers["Answer"] = "authorization failed";
 
                 var strResult = authFailed();
 
                 await response.WriteAsync(strResult);
             }
-            else
-                await next.Invoke();
         }
 
         private static string authFailed()
