@@ -8,6 +8,9 @@ using JWT.Serializers;
 
 namespace HermesOcelot
 {
+    /// <summary>
+    /// JWT 工具类
+    /// </summary>
     public class JwtHelper
     {
         /// <summary>
@@ -38,8 +41,11 @@ namespace HermesOcelot
             }
         }
 
-
-
+        /// <summary>
+        /// 验证id token
+        /// </summary>
+        /// <param name="token">id token</param>
+        /// <returns></returns>
         public bool ValidateIdToken(string token)
         {
             try
@@ -52,7 +58,7 @@ namespace HermesOcelot
                     .MustVerifySignature()
                     .Decode<IDictionary<string, object>>(token);
 
-                Console.WriteLine(json);
+                // Console.WriteLine(json);
 
                 return true;
             }
@@ -67,6 +73,42 @@ namespace HermesOcelot
                 Console.WriteLine("Token has invalid signature");
 
                 return false;
+            }
+            catch(Exception)
+            {
+                Console.WriteLine("Token has invalid format");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 生成access token
+        /// </summary>
+        /// <param name="uid">用户ID</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// 10分钟有效期
+        /// </remarks>
+        public string CreateAccessToken(string uid)
+        {
+            try
+            {
+                const string key = "the shengdangjia hermes project";
+
+                var token = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA384Algorithm())
+                    .WithSecret(key)
+                    .Subject("access token")
+                    .Issuer("auth")
+                    .ExpirationTime(DateTime.Now.AddMinutes(10))
+                    .AddClaim("uid", uid)
+                    .Encode();
+
+                return token;
+            }
+            catch (Exception e)
+            {
+                return e.Message;
             }
         }
     }

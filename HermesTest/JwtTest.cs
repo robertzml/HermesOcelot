@@ -41,6 +41,11 @@ namespace HermesTest
 
                 return false;
             }
+            catch(Exception)
+            {
+                Console.WriteLine("Token format is wrong.");
+                return false;
+            }
         }
         #endregion //Function
 
@@ -72,13 +77,15 @@ namespace HermesTest
         [Test]
         public void TestValidIdToken()
         {
-            string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9" +
-                ".eyJzdWIiOiJpZCB0b2tlbiIsImlzcyI6ImF1dGgiLCJleHAiOjE1OTE0MzU2NTcuMCwidWlkIjoiemhhbmdzYW4ifQ" +
-                ".2mPd-5U50gtGqMcqTreKQeiBIqapxnMpX9zUnE0nTH53u1GwsxXY5aTtjb9LjRhp";
+            //string token = "1eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9." +
+            //    "eyJzdWIiOiJpZCB0b2tlbiIsInVpZCI6ImNjNWM2YjZlLTQxMTEtNGEyZC05YTQ1LTBiNjFmMWI0NDczNyIsImlzcyI6ImF1dGgiLCJleHAiOjE1OTIwMzE0Mjl9.Ww9SnTyb-" +
+            //    "oQIEm_6hvqvS2h4mFNDQV1ooj0-0Qedyc4qoZN9YlnbXxzlNWmDEhF";
+
+            string token = "123";
 
             var result = ValidateIdToken(token);
 
-            Assert.IsTrue(result);
+            Assert.IsFalse(result);
         }
     }
 }

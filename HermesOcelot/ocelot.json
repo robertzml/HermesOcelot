@@ -5,8 +5,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.1.121",
-          "Port": 10011
+          "Host": "localhost",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/account-service/{everything}",
@@ -21,8 +21,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "192.168.1.121",
-          "Port": 10011
+          "Host": "localhost",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/auth-service/{everything}",
