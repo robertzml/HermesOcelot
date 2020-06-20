@@ -28,5 +28,10 @@ namespace HermesOcelot.Base
         /// 用户ID
         /// </summary>
         public string Uid { get; set; }
+
+        /// <summary>
+        /// 错误消息
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace HermesTest
         #region Field
         JwtHelper jwtHelper;
         #endregion //Field
-        
+
 
         [SetUp]
         public void Setup()
@@ -44,9 +44,38 @@ namespace HermesTest
             string uid = "zhangsan";
             var token = this.jwtHelper.CreateIdToken(uid);
 
+            Console.WriteLine(token);
+
             var state = this.jwtHelper.ValidateIdToken(token);
 
             Assert.IsTrue(state.Success);
+        }
+
+        /// <summary>
+        /// 验证id token超时
+        /// </summary>
+        [Test(Description = "验证id token超时")]
+        public void TestIdTokenExpire()
+        {
+            var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpZCB0b2tlbiIsImlzcyI6ImF1dGgiLCJleHAiOjE1OTI2MzI5NjYuMCwidWlkIjoiemhhbmdzYW4ifQ.36dZqEHHZb8xTPHUELiMeGv_gkkXWHXU4aVkoEiEd-WfTGBt7hwQS2mGUSYMeeVx";
+
+            var state = this.jwtHelper.ValidateIdToken(token);
+
+            Assert.IsTrue(state.IsExpire);
+        }
+
+        /// <summary>
+        /// 验证id token 失败
+        /// </summary>
+        [Test(Description = "验证id token 失败")]
+        public void TestIdTokenError()
+        {
+            var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpZCB0b2tlbiIsImlzcyI6ImF1dGgiLCJleHAiOjE1OTI2Mzc1NTQuMCwidWlkIjoiemhhbmdzYW4ifQ.Gg8B4pjN-I0XH-X-bYLuVsTr0fv46Ehvv9sERjDtRbJDT71QlSm-jhXuqTD-oILU";
+
+            var state = this.jwtHelper.ValidateIdToken(token);
+
+            Console.WriteLine(state.ErrorMessage);
+            Assert.IsFalse(state.Success);
         }
         #endregion //Test
     }

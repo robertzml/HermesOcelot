@@ -21,6 +21,14 @@ namespace HermesOcelot.Base
         private const string key = "the shengdangjia hermes project";
         #endregion //Field
 
+        #region Function
+        public static DateTime TimeStampToDateTime(long timeStamp)
+        {
+            var dto = DateTimeOffset.FromUnixTimeSeconds(timeStamp);
+            return dto.ToLocalTime().DateTime;
+        }
+        #endregion //Function
+
         #region Method
         /// <summary>
         /// 生成id token
@@ -68,25 +76,26 @@ namespace HermesOcelot.Base
                     .MustVerifySignature()
                     .Decode<IDictionary<string, object>>(token);
 
-                return new JwtState { Success = true, IsExpire = false, Uid = json["uid"].ToString() };
+                DateTime exp = TimeStampToDateTime(Convert.ToInt64(json["exp"]));
+                return new JwtState { Success = true, IsExpire = false, Uid = json["uid"].ToString(), ExpireTime = exp };
             }
             catch (TokenExpiredException e)
             {
-                Console.WriteLine("Token has expired");
-
-                return new JwtState { Success = false, IsExpire = true, ExpireTime = e.Expiration.Value };
+                return new JwtState
+                {
+                    Success = false,
+                    IsExpire = true,
+                    ExpireTime = e.Expiration.Value.ToLocalTime(),
+                    ErrorMessage = "已超时"
+                };
             }
             catch (SignatureVerificationException)
             {
-                Console.WriteLine("Token has invalid signature");
-
-                return new JwtState { Success = false, IsExpire = false };
+                return new JwtState { Success = false, IsExpire = false, ErrorMessage = "签名验证失败" };
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Token has invalid format");
-
-                return null;
+                return new JwtState { Success = false, IsExpire = false, ErrorMessage = e.Message }; ;
             }
         }
 
