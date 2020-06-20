@@ -57,6 +57,7 @@ namespace HermesOcelot
                 var req = ctx.Request;
                 var response = ctx.Response;
 
+                // 跳过注册登录请求
                 if (Regex.IsMatch(req.Path.Value, "/auth-service/(register|auth).+"))
                 {
                     await next.Invoke();
@@ -84,9 +85,11 @@ namespace HermesOcelot
 
                 if (jwtState.Success)
                 {
+                    Console.WriteLine(string.Format("sub: {0}", jwtState.Subject));
+
                     // 生成access token 替换 authorization header
                     var accessToken = jwtHelper.CreateAccessToken(jwtState.Uid);
-                    Console.WriteLine(accessToken);
+                    Console.WriteLine(string.Format("access token: {0}", accessToken));
 
                     req.Headers.Remove("Authorization");
                     req.Headers.Add("Authorization", accessToken);

@@ -28,7 +28,7 @@ namespace HermesOcelot
                })
                .ConfigureServices(s =>
                {
-                   s.AddOcelot();//.AddConsul();
+                   s.AddOcelot().AddConsul();
                })
                .ConfigureLogging((hostingContext, logging) =>
                {

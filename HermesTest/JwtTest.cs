@@ -79,6 +79,19 @@ namespace HermesTest
             Console.WriteLine(state.ErrorMessage);
             Assert.IsFalse(state.Success);
         }
+
+        /// <summary>
+        /// 生成access token
+        /// </summary>
+        [Test(Description = "生成access token")]
+        public void TestCreateAccessToken()
+        {
+            string uid = "zhangsan";
+            var token = jwtHelper.CreateAccessToken(uid);
+
+            Console.WriteLine(token);
+            Assert.Pass();
+        }
         #endregion //Test
     }
 }

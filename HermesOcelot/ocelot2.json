@@ -9,6 +9,16 @@
       "LoadBalancerOptions": {
         "Type": "RoundRobin"
       }
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/auth-service/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "ServiceName": "hermes-account",
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
     }
   ],
   "GlobalConfiguration": {
