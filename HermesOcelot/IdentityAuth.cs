@@ -24,12 +24,12 @@ namespace HermesOcelot
                 return;
             }
 
+            // 检查是否有 Authorization header
             if (req.Headers["Authorization"].Count == 0)
             {
                 var response = ctx.Response;
                 response.ContentType = "application/json";
                 response.StatusCode = 401;
-                // response.Headers["Answer"] = "no authorization header";
 
                 var strResult = authFailed("no authorization header");
 
@@ -40,21 +40,22 @@ namespace HermesOcelot
             var token = req.Headers["Authorization"][0];
 
             JwtHelper jwtHelper = new JwtHelper();
+            // 验证id token
             var valid = jwtHelper.ValidateIdToken(token);
+
             if (valid)
             {
                 try
                 {
                     var accessToken = jwtHelper.CreateAccessToken("");
                     Console.WriteLine(accessToken);
-                    // req.Headers.Add("Access Token", accessToken);
-                    req.Headers.Remove("Authorization");
 
+                    req.Headers.Remove("Authorization");
                     req.Headers.Add("Authorization", accessToken);
-                    
+
                     await next.Invoke();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                     await next.Invoke();
@@ -65,7 +66,6 @@ namespace HermesOcelot
                 var response = ctx.Response;
                 response.ContentType = "application/json";
                 response.StatusCode = 401;
-                // response.Headers["Answer"] = "authorization failed";
 
                 var strResult = authFailed("authorization failed");
 
@@ -73,6 +73,11 @@ namespace HermesOcelot
             }
         }
 
+        /// <summary>
+        /// 认证失败返回
+        /// </summary>
+        /// <param name="message">错误消息</param>
+        /// <returns></returns>
         private static string authFailed(string message)
         {
             JwtHelper jwtHelper = new JwtHelper();
