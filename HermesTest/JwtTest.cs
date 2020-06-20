@@ -49,6 +49,8 @@ namespace HermesTest
             var state = this.jwtHelper.ValidateIdToken(token);
 
             Assert.IsTrue(state.Success);
+
+            Assert.AreEqual("id token", state.Subject);
         }
 
         /// <summary>

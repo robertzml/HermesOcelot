@@ -9,6 +9,12 @@ namespace HermesOcelot.Base
     /// </summary>
     public class JwtState
     {
+        #region Property
+        /// <summary>
+        /// 主题
+        /// </summary>
+        public string Subject { get; set; }
+
         /// <summary>
         /// 验证成功
         /// </summary>
@@ -33,5 +39,6 @@ namespace HermesOcelot.Base
         /// 错误消息
         /// </summary>
         public string ErrorMessage { get; set; }
+        #endregion //Property
     }
 }

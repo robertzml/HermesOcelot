@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HermesOcelot.Base\HermesOcelot.Base.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="discovery.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

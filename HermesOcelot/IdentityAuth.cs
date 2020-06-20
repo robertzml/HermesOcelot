@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HermesOcelot.Base;
 
 namespace HermesOcelot
 {
@@ -14,65 +15,7 @@ namespace HermesOcelot
     /// </summary>
     public class IdentityAuth
     {
-        public static async Task AuthIdToken(HttpContext ctx, System.Func<System.Threading.Tasks.Task> next)
-        {
-            var req = ctx.Request;
-
-            if (Regex.IsMatch(req.Path.Value, "/auth-service/(register|auth).+"))
-            {
-                await next.Invoke();
-                return;
-            }
-
-            // 检查是否有 Authorization header
-            if (req.Headers["Authorization"].Count == 0)
-            {
-                var response = ctx.Response;
-                response.ContentType = "application/json";
-                response.StatusCode = 401;
-
-                var strResult = authFailed("no authorization header");
-
-                await response.WriteAsync(strResult);
-                return;
-            }
-
-            var token = req.Headers["Authorization"][0];
-
-            JwtHelper jwtHelper = new JwtHelper();
-            // 验证id token
-            var valid = jwtHelper.ValidateIdToken(token);
-
-            if (valid)
-            {
-                try
-                {
-                    var accessToken = jwtHelper.CreateAccessToken("");
-                    Console.WriteLine(accessToken);
-
-                    req.Headers.Remove("Authorization");
-                    req.Headers.Add("Authorization", accessToken);
-
-                    await next.Invoke();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    await next.Invoke();
-                }
-            }
-            else
-            {
-                var response = ctx.Response;
-                response.ContentType = "application/json";
-                response.StatusCode = 401;
-
-                var strResult = authFailed("authorization failed");
-
-                await response.WriteAsync(strResult);
-            }
-        }
-
+        #region Function
         /// <summary>
         /// 认证失败返回
         /// </summary>
@@ -80,7 +23,6 @@ namespace HermesOcelot
         /// <returns></returns>
         private static string authFailed(string message)
         {
-            JwtHelper jwtHelper = new JwtHelper();
             var responseData = new ResponseData
             {
                 ErrorCode = 1,
@@ -99,5 +41,75 @@ namespace HermesOcelot
 
             return strResult;
         }
+        #endregion //Function
+
+        #region Method
+        /// <summary>
+        /// 认证id token
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        public static async Task AuthIdToken(HttpContext ctx, System.Func<System.Threading.Tasks.Task> next)
+        {
+            try
+            {
+                var req = ctx.Request;
+                var response = ctx.Response;
+
+                if (Regex.IsMatch(req.Path.Value, "/auth-service/(register|auth).+"))
+                {
+                    await next.Invoke();
+                    return;
+                }
+
+                // 检查是否有 Authorization header
+                if (req.Headers["Authorization"].Count == 0)
+                {
+                    response.ContentType = "application/json";
+                    response.StatusCode = 401;
+
+                    var strResult = authFailed("no authorization header");
+
+                    await response.WriteAsync(strResult);
+                    return;
+                }
+
+                // 获取token
+                JwtHelper jwtHelper = new JwtHelper();
+                var token = req.Headers["Authorization"][0];
+
+                // 验证id token
+                var jwtState = jwtHelper.ValidateIdToken(token);
+
+                if (jwtState.Success)
+                {
+                    // 生成access token 替换 authorization header
+                    var accessToken = jwtHelper.CreateAccessToken(jwtState.Uid);
+                    Console.WriteLine(accessToken);
+
+                    req.Headers.Remove("Authorization");
+                    req.Headers.Add("Authorization", accessToken);
+
+                    await next.Invoke();
+                }
+                else
+                {
+                    // jwt 验证失败
+                    response.ContentType = "application/json";
+                    response.StatusCode = 401;
+
+                    var strResult = authFailed(jwtState.ErrorMessage);
+
+                    await response.WriteAsync(strResult);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                await next.Invoke();
+            }
+        }
+        #endregion //Method
     }
 }

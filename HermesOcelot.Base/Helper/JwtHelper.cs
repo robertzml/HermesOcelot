@@ -68,16 +68,21 @@ namespace HermesOcelot.Base
         {
             try
             {
-                const string key = "the shengdangjia hermes project";
-
                 var json = new JwtBuilder()
-                    .WithAlgorithm(new HMACSHA384Algorithm()) // symmetric
+                    .WithAlgorithm(new HMACSHA384Algorithm())
                     .WithSecret(key)
                     .MustVerifySignature()
                     .Decode<IDictionary<string, object>>(token);
 
                 DateTime exp = TimeStampToDateTime(Convert.ToInt64(json["exp"]));
-                return new JwtState { Success = true, IsExpire = false, Uid = json["uid"].ToString(), ExpireTime = exp };
+                return new JwtState
+                {
+                    Subject = json["sub"].ToString(),
+                    Success = true,
+                    IsExpire = false,
+                    Uid = json["uid"].ToString(),
+                    ExpireTime = exp
+                };
             }
             catch (TokenExpiredException e)
             {
@@ -103,7 +108,7 @@ namespace HermesOcelot.Base
         /// 生成access token
         /// </summary>
         /// <param name="uid">用户ID</param>
-        /// <returns></returns>
+        /// <returns>access token</returns>
         /// <remarks>
         /// 10分钟有效期
         /// </remarks>
@@ -111,8 +116,6 @@ namespace HermesOcelot.Base
         {
             try
             {
-                const string key = "the shengdangjia hermes project";
-
                 var token = new JwtBuilder()
                     .WithAlgorithm(new HMACSHA384Algorithm())
                     .WithSecret(key)
@@ -127,6 +130,51 @@ namespace HermesOcelot.Base
             catch (Exception e)
             {
                 return e.Message;
+            }
+        }
+
+        /// <summary>
+        /// 验证access token
+        /// </summary>
+        /// <param name="token">access token</param>
+        /// <returns></returns>
+        public JwtState ValidateAccessToken(string token)
+        {
+            try
+            {
+                var json = new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA384Algorithm())
+                    .WithSecret(key)
+                    .MustVerifySignature()
+                    .Decode<IDictionary<string, object>>(token);
+
+                DateTime exp = TimeStampToDateTime(Convert.ToInt64(json["exp"]));
+                return new JwtState
+                {
+                    Subject = json["sub"].ToString(),
+                    Success = true,
+                    IsExpire = false,
+                    Uid = json["uid"].ToString(),
+                    ExpireTime = exp
+                };
+            }
+            catch (TokenExpiredException e)
+            {
+                return new JwtState
+                {
+                    Success = false,
+                    IsExpire = true,
+                    ExpireTime = e.Expiration.Value.ToLocalTime(),
+                    ErrorMessage = "已超时"
+                };
+            }
+            catch (SignatureVerificationException)
+            {
+                return new JwtState { Success = false, IsExpire = false, ErrorMessage = "签名验证失败" };
+            }
+            catch (Exception e)
+            {
+                return new JwtState { Success = false, IsExpire = false, ErrorMessage = e.Message }; ;
             }
         }
         #endregion //Method
