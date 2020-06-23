@@ -91,12 +91,12 @@ namespace HermesOcelot.Base
                     Success = false,
                     IsExpire = true,
                     ExpireTime = e.Expiration.Value.ToLocalTime(),
-                    ErrorMessage = "已超时"
+                    ErrorMessage = "id token 已超时"
                 };
             }
             catch (SignatureVerificationException)
             {
-                return new JwtState { Success = false, IsExpire = false, ErrorMessage = "签名验证失败" };
+                return new JwtState { Success = false, IsExpire = false, ErrorMessage = "id token 签名验证失败" };
             }
             catch (Exception e)
             {

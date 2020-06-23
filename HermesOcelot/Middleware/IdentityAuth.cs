@@ -83,9 +83,9 @@ namespace HermesOcelot
                 // 验证id token
                 var jwtState = jwtHelper.ValidateIdToken(token);
 
-                if (jwtState.Success)
+                if (jwtState.Success) // id token jwt 验证成功
                 {
-                    Console.WriteLine(string.Format("sub: {0}", jwtState.Subject));
+                    Console.WriteLine(string.Format("id token sub: {0}", jwtState.Subject));
 
                     // 生成access token 替换 authorization header
                     var accessToken = jwtHelper.CreateAccessToken(jwtState.Uid);
@@ -96,9 +96,8 @@ namespace HermesOcelot
 
                     await next.Invoke();
                 }
-                else
+                else  // id token jwt 验证失败
                 {
-                    // jwt 验证失败
                     response.ContentType = "application/json";
                     response.StatusCode = 401;
 
