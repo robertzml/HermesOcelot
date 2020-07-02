@@ -54,18 +54,22 @@ namespace HermesOcelot
         {
             try
             {
-                var req = ctx.Request;
+                var request = ctx.Request;
                 var response = ctx.Response;
 
                 // 跳过注册登录请求
-                if (Regex.IsMatch(req.Path.Value, "/auth-service/(register|auth).+"))
+                if (Regex.IsMatch(request.Path.Value, "/auth-service/(register|auth).+"))
                 {
                     await next.Invoke();
                     return;
                 }
 
+                // 获取请求来源
+                var referer = request.Headers["Referer"].ToString();
+                Console.WriteLine(string.Format("request path: {0}; from: {1}", request.Path.Value, referer));
+
                 // 检查是否有 Authorization header
-                if (req.Headers["Authorization"].Count == 0)
+                if (request.Headers["Authorization"].Count == 0)
                 {
                     response.ContentType = "application/json";
                     response.StatusCode = 401;
@@ -78,26 +82,28 @@ namespace HermesOcelot
 
                 // 获取token
                 JwtHelper jwtHelper = new JwtHelper();
-                var token = req.Headers["Authorization"][0];
+                var token = request.Headers["Authorization"][0];
 
                 // 验证id token
                 var jwtState = jwtHelper.ValidateIdToken(token);
 
                 if (jwtState.Success) // id token jwt 验证成功
                 {
-                    Console.WriteLine(string.Format("id token sub: {0}", jwtState.Subject));
-
                     // 生成access token 替换 authorization header
                     var accessToken = jwtHelper.CreateAccessToken(jwtState.Uid);
-                    Console.WriteLine(string.Format("access token: {0}", accessToken));
 
-                    req.Headers.Remove("Authorization");
-                    req.Headers.Add("Authorization", accessToken);
+                    Console.WriteLine(string.Format("valid id token succes, sub: {0}, uid: {1}, generate access token: {2}",
+                        jwtState.Subject, jwtState.Uid, accessToken));
+
+                    request.Headers.Remove("Authorization");
+                    request.Headers.Add("Authorization", accessToken);
 
                     await next.Invoke();
                 }
                 else  // id token jwt 验证失败
                 {
+                    Console.WriteLine(string.Format("valid id token failed. error: {0}", jwtState.ErrorMessage));
+
                     response.ContentType = "application/json";
                     response.StatusCode = 401;
 
