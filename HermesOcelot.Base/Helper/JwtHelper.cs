@@ -36,7 +36,7 @@ namespace HermesOcelot.Base
         /// <param name="uid">用户ID</param>
         /// <returns>id token</returns>
         /// <remarks>
-        /// 超时时间1小时
+        /// 1小时有效期
         /// </remarks>
         public string CreateIdToken(string uid)
         {

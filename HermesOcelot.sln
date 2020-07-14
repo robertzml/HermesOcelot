@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HermesOcelot", "HermesOcelo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CCA00833-891C-4624-9FB6-E6588A825FA1}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
@@ -14,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HermesTest", "HermesTest\HermesTest.csproj", "{67EEE443-BFC1-4A60-9688-827BD19C6005}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HermesOcelot.Base", "HermesOcelot.Base\HermesOcelot.Base.csproj", "{00281336-CA40-4CD9-BE87-AD220CC397CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HermesOcelot.Base", "HermesOcelot.Base\HermesOcelot.Base.csproj", "{00281336-CA40-4CD9-BE87-AD220CC397CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

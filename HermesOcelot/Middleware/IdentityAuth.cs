@@ -80,7 +80,7 @@ namespace HermesOcelot
                     return;
                 }
 
-                // 获取token
+                // 获取 Authorization header
                 JwtHelper jwtHelper = new JwtHelper();
                 var token = request.Headers["Authorization"][0];
 
@@ -102,7 +102,7 @@ namespace HermesOcelot
                 }
                 else  // id token jwt 验证失败
                 {
-                    Console.WriteLine(string.Format("valid id token failed. error: {0}", jwtState.ErrorMessage));
+                    Console.WriteLine(string.Format("valid id token failed, error: {0}", jwtState.ErrorMessage));
 
                     response.ContentType = "application/json";
                     response.StatusCode = 401;
